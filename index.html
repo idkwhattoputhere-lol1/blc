@@ -1681,6 +1681,69 @@
             box-shadow: 0 10px 25px rgba(0, 245, 255, 0.3);
         }
     </style>
+
+<style>
+#chatbot-toggle {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  background: #1e1e1e;
+  color: white;
+  border-radius: 50%;
+  width: 50px;
+  height: 50px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  z-index: 10000;
+  box-shadow: 0 0 10px rgba(0,0,0,0.5);
+  font-size: 24px;
+}
+
+#chatbot-sidebar {
+  position: fixed;
+  top: 0;
+  right: -400px; /* oculto por defecto */
+  width: 400px;
+  height: 100%;
+  background: #121212;
+  border-left: 2px solid #333;
+  box-shadow: -4px 0 10px rgba(0,0,0,0.5);
+  transition: right 0.3s ease-in-out;
+  z-index: 9999;
+}
+
+#chatbot-sidebar.open {
+  right: 0;
+}
+
+
+#chatbot-close {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  background: #333;
+  color: white;
+  border-radius: 50%;
+  width: 30px;
+  height: 30px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  font-size: 16px;
+  box-shadow: 0 0 6px rgba(0,0,0,0.5);
+  z-index: 10001;
+}
+
+#chatbot-frame {
+  width: 100%;
+  height: 100%;
+  border: none;
+}
+</style>
+
 </head>
 <body>
     <!-- PRELOADER -->
@@ -3046,79 +3109,27 @@
     <audio autoplay loop id="bgmusic">
         <source src="https://cdn.pixabay.com/audio/2022/03/03/audio_a75ca63405.mp3" type="audio/mpeg" />
     </audio>
-</body>
-</html>
 
+<!-- Botón flotante para abrir/cerrar chatbot -->
+<div id="chatbot-toggle">💬</div>
 
+<!-- Panel lateral del chatbot -->
+<div id="chatbot-sidebar">
+  <div id="chatbot-close">✖</div>
 
-
-<!-- 🔹 Login con keep login + Google/Discord -->
-<div class="login-container" id="login-screen">
-  <h2>Iniciar Sesión</h2>
-  <input type="text" id="username" placeholder="Usuario" />
-  <input type="password" id="password" placeholder="Contraseña" />
-  <label><input type="checkbox" id="keep-login"> Mantener sesión iniciada</label>
-  <button onclick="login()">Entrar</button>
-  <button onclick="loginWith('google')">Iniciar con Google</button>
-  <button onclick="loginWith('discord')">Iniciar con Discord</button>
-</div>
-
-<!-- 🔹 App con chatbot -->
-<div class="app-container hidden" id="app-screen">
-  <h2>Bienvenido a Black Echo</h2>
-  <p>Esta es tu UI principal. Debajo se cargará el chatbot:</p>
-  <div id="chatbot-container"></div>
+  <iframe id="chatbot-frame" src="https://blackechortd-black-echo-gemini-chatbot.hf.space"></iframe>
 </div>
 
 <script>
-  window.onload = function() {
-    // Revisar si hay sesión guardada
-    if(localStorage.getItem("keepLogin") === "true") {
-      document.getElementById("login-screen").classList.add("hidden");
-      document.getElementById("app-screen").classList.remove("hidden");
-      loadChatbot();
-    }
-  };
+document.getElementById("chatbot-toggle").addEventListener("click", () => {
+  document.getElementById("chatbot-sidebar").classList.toggle("open");
+});
 
-  function login() {
-    const username = document.getElementById("username").value;
-    const password = document.getElementById("password").value;
-    const keepLogin = document.getElementById("keep-login").checked;
+document.getElementById("chatbot-close").addEventListener("click", () => {
+  document.getElementById("chatbot-sidebar").classList.remove("open");
+});
 
-    if (username && password) {
-      if(keepLogin) {
-        localStorage.setItem("keepLogin", "true");
-      }
-      document.getElementById("login-screen").classList.add("hidden");
-      document.getElementById("app-screen").classList.remove("hidden");
-      loadChatbot();
-    } else {
-      alert("Por favor ingresa usuario y contraseña.");
-    }
-  }
-
-  function loginWith(provider) {
-    // Simulación de login con Google/Discord
-    if(provider === "google") {
-      alert("Sesión iniciada con Google ✔");
-    } else if(provider === "discord") {
-      alert("Sesión iniciada con Discord ✔");
-    }
-    localStorage.setItem("keepLogin", "true");
-    document.getElementById("login-screen").classList.add("hidden");
-    document.getElementById("app-screen").classList.remove("hidden");
-    loadChatbot();
-  }
-
-  function loadChatbot() {
-    const container = document.getElementById("chatbot-container");
-    if (!container.querySelector("iframe")) {
-      const chatbotFrame = document.createElement("iframe");
-      chatbotFrame.src = "https://blackechortd-black-echo-gemini-chatbot.hf.space";
-      chatbotFrame.style.width = "100%";
-      chatbotFrame.style.height = "100%";
-      chatbotFrame.style.border = "none";
-      container.appendChild(chatbotFrame);
-    }
-  }
 </script>
+
+</body>
+</html>
